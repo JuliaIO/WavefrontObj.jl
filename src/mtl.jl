@@ -85,7 +85,7 @@ function readMtlFile(io::IO; colortype=Float64)
         line = strip(chomp(readline(io)))
         @assert is_valid_ascii(line)
 
-        if !beginswith(line, "#") && !isempty(line) && !iscntrl(line) #ignore comments
+        if !startswith(line, "#") && !isempty(line) && !iscntrl(line) #ignore comments
             line_parts = split(line)
             command = line_parts[1]
             remainder = length(line_parts) > 1 ? line[searchindex(line, line_parts[2]):end] : ""

@@ -1,6 +1,7 @@
 module WavefrontObj
 
-using ImmutableArrays
+using GeometryTypes, MeshIO, FileIO, Compat, FixedSizeArrays
+importall FileIO
 
 include("obj.jl")
 include("mtl.jl")
