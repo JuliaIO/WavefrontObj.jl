@@ -41,7 +41,7 @@ function readobj{MT <: Mesh}(io::IO, MeshType::Type{MT}=GLNormalMesh)
     for line in eachline(io)
         # read a line, remove newline and leading/trailing whitespaces
         line = strip(chomp(line))
-        @assert is_valid_ascii(line) "non valid ascii in obj"
+        @assert isvalid(line) "non valid ascii in obj"
 
         if !startswith(line, "#") && !isempty(line) && !iscntrl(line) #ignore comments
             lines        = split(line)

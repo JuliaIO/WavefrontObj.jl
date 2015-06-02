@@ -83,7 +83,7 @@ function readMtlFile(io::IO; colortype=Float64)
     while !eof(io)
         # read a line, remove newline and leading/trailing whitespaces
         line = strip(chomp(readline(io)))
-        @assert is_valid_ascii(line)
+        @assert isvalid(line)
 
         if !startswith(line, "#") && !isempty(line) && !iscntrl(line) #ignore comments
             line_parts = split(line)
