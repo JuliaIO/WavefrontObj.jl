@@ -6,8 +6,8 @@
 
 
 function Base.read(fn::File{:obj}, MeshType=GLNormalMesh)
-    fio = open(fn.abspath, "r")
-    mesh = readobj(fio, MeshType)
+    fio     = open(fn.abspath, "r")
+    mesh    = readobj(fio, MeshType)
     close(fio)
     return mesh
 end
@@ -15,8 +15,8 @@ end
 
 #Default OBJ types
 const WVO_ATTRIBUTES = @compat Dict(
-    "v"     => Point3{Float32},
-    "vn"    => Normal3{Float32},
+    "v"     => Point{3, Float32},
+    "vn"    => Normal{3, Float32},
     "vt"    => UVW{Float32},
     "f"     => Face
 )
@@ -42,7 +42,7 @@ function readobj{MT <: Mesh}(io::IO, MeshType::Type{MT}=GLNormalMesh)
     for line in eachline(io)
         # read a line, remove newline and leading/trailing whitespaces
         line = strip(chomp(line))
-        @assert isvalid(line) "non valid ascii in obj"
+        !isvalid(line) && error("non valid ascii in obj")
 
         if !startswith(line, "#") && !isempty(line) && !iscntrl(line) #ignore comments
             lines        = split(line)
@@ -88,11 +88,11 @@ function push_lines!{T <: FixedVector, S <: AbstractString}(v::Vector{T}, lines:
     push!(v, T(lines))
 end
 #Vertices
-process{V <: Point3, S <: AbstractString}(::Type{V}, lines::Vector{S}, mesh::Mesh, line::Int) =
+process{V <: Point{3}, S <: AbstractString}(::Type{V}, lines::Vector{S}, mesh::Mesh, line::Int) =
     push_lines!(mesh.vertices, lines, line)
 
 #Normals
-process{N <: Normal3, S <: AbstractString}(::Type{N}, lines::Vector{S}, mesh::Mesh, line::Int) =
+process{N <: Normal{3}, S <: AbstractString}(::Type{N}, lines::Vector{S}, mesh::Mesh, line::Int) =
     push_lines!(mesh[N], lines, line)
 
 #Texture coordinates
