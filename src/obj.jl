@@ -5,16 +5,20 @@
 ##############################
 
 
-function Base.read(fn::File{:obj}, MeshType=GLNormalMesh)
-    fio     = open(fn.abspath, "r")
-    mesh    = readobj(fio, MeshType)
-    close(fio)
+add_format(format"OBJ", (), ".obj")
+
+add_loader(format"OBJ", :GeometryTypes)
+
+function load(fn::format"OBJ", MeshType=GLNormalMesh)
+    io   = open(fn)
+    mesh = load(io, typ)
+    close(io)
     return mesh
 end
 
 
 #Default OBJ types
-const WVO_ATTRIBUTES = @compat Dict(
+const WVO_ATTRIBUTES = Dict(
     "v"     => Point{3, Float32},
     "vn"    => Normal{3, Float32},
     "vt"    => UVW{Float32},
@@ -34,7 +38,8 @@ function get_attrib_type(mesh::Mesh, attrib::AbstractString)
 end
 
 
-function readobj{MT <: Mesh}(io::IO, MeshType::Type{MT}=GLNormalMesh)
+function load{MT <: Mesh}(io::Stream{format"OBJ"}, MeshType::Type{MT}=GLNormalMesh)
+    io           = stream(io)
     lineNumber   = 1
     mesh         = MeshType()
     last_command = ""
@@ -119,8 +124,8 @@ process_face_uv_or_normal{S <: AbstractString}(lines::Vector{S}) = map(SplitFunc
 
 function process{F <: Face, S <: AbstractString}(::Type{F}, lines::Vector{S}, mesh::Mesh, line::Int)
     if any(x->contains(x, "/"), lines)
-        faces = process_face_uv_or_normal(lines) 
-    elseif any(x->contains(x, "//"), lines) 
+        faces = process_face_uv_or_normal(lines)
+    elseif any(x->contains(x, "//"), lines)
         faces = process_face_normal(lines)
     else
         return push!(mesh[F], F(Triangle{Uint32}(lines)))
