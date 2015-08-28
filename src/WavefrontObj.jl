@@ -1,8 +1,6 @@
 module WavefrontObj
 
-using GeometryTypes, FileIO, FixedSizeArrays
-
-importall FileIO
+using GeometryTypes, FileIO
 
 include("obj.jl")
 include("mtl.jl")
