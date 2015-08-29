@@ -1,3 +1,4 @@
+#=
 ##############################
 #
 # mtl-Files
@@ -164,3 +165,5 @@ function readMtlFile(io::IO; colortype=Float64)
 
     return materials
 end
+
+=#
